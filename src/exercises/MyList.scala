@@ -1,52 +1,55 @@
 package exercises
 
-abstract class MyList {
+abstract class MyList[+A] {
 
-  def head: Int
-  def tail: MyList
+  def head: A
+  def tail: MyList[A]
   def isEmpty: Boolean
-  def add(n: Int): MyList
+  def add[B >: A](n: B): MyList[B]
   def printElement: String
   override def toString: String = printElement
 
 }
 
-object Empty extends MyList {
+case object Empty extends MyList[Nothing] {
 
-  override def head: Int = throw new NoSuchElementException
+  override def head: Nothing = throw new NoSuchElementException
 
-  override def tail: MyList = throw new NoSuchElementException
+  override def tail: MyList[Nothing] = throw new NoSuchElementException
 
   override def isEmpty: Boolean = true
 
-  override def add(n: Int): MyList = new Cons(n, Empty)
+  override def add[B >: Nothing](n: B): MyList[B] = new Cons(n, Empty)
 
   override def printElement: String = ""
 
 }
 
-class Cons(h: Int, t: MyList) extends MyList {
-  override def head: Int = h
+case class Cons[+A](h: A, t: MyList[A]) extends MyList[A] {
+  override def head: A = h
 
-  override def tail: MyList = t
+  override def tail: MyList[A] = t
 
   override def isEmpty: Boolean = false
 
-  override def add(n: Int): MyList = new Cons(n, this)
+  override def add[B >: A](n: B): MyList[B] = new Cons(n, this)
 
   override def printElement: String =
     if (t.isEmpty) "" + h
     else h + " " + t.printElement
 }
 
-object ListTest extends App {
-  val list = new Cons(1, Empty)
-  println(list.head)
+trait MyPredicate[-T] {
+  def test(elem: T): Boolean
+}
 
-  val list2 = new Cons(1, new Cons(2, new Cons(3, Empty)))
-  println(list2.head)
-  println(list2.tail.head)
-  println(list2.add(5).head)
-  println(list2.toString)
+object ListTest extends App {
+  val listOfIntegers: MyList[Int] = new Cons(1, new Cons(2, new Cons(3, Empty)))
+  val cloneListOfIntegers: MyList[Int] = new Cons(1, new Cons(2, new Cons(3, Empty)))
+  val listOfStrings: MyList[String] = new Cons("Hello", new Cons("Scala", Empty))
+
+  println(listOfIntegers.toString)
+  println(listOfStrings.toString)
+  println(listOfIntegers == cloneListOfIntegers)
 
 }
