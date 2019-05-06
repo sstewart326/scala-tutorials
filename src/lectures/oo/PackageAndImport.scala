@@ -20,7 +20,7 @@ object PackageAndImport extends App {
   val princeCharming = new PrinceCharming
 
   val d = new Date
-  val sqlD = new SqlDate
+  val sqlD = new SqlDate(1L)
 
 
 }
